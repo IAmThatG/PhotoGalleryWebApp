@@ -1,0 +1,114 @@
+﻿@model PhotoGallery.web.ViewModel.LoginModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3" id="loginForm">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h2 class="panel-title">Login</h2>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="@Url.Action("Login")">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label"><span class="fa fa-envelope fa-2x"></span></label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
+                            @Html.ValidationMessage("Email", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label"><span class="fa fa-asterisk fa-2x"></span></label>
+                        <div class="col-sm-10">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                            @Html.ValidationMessage("Password", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    @Html.HiddenFor(m => m.ReturnUrl)
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RememberMe) Remember me
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="pull-right">
+                            <a href="#" class="text-info" data-toggle="modal" data-target="#registrationModal">Register</a>
+                            &nbsp;
+                        </span>
+                        <div class="col-md-offset-2">
+                            <button type="submit" class="btn btn-primary">Sign in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Registration Modal-->
+
+<div class="modal fade" id="registrationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" aria-hidden="true" type="button" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title text-primary">Register</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" action=@Url.Action("Register", new { returnUrl = "/Home/Index" })>
+                    <div class="form-group">
+                        <div class="col-md-4"> @Html.LabelFor(m => m.regModel.Firstname, new { @class = "h5" }) </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.regModel.Firstname, new { @class = "form-control", placeholder = "firstname" })
+                            @Html.ValidationMessage("Firstname", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4"> @Html.LabelFor(m => m.regModel.Lastname, new { @class = "h5" }) </div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.regModel.Lastname, new { @class = "form-control", placeholder = "Lastname" })
+                            @Html.ValidationMessage("Lastname", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4"> @Html.LabelFor(m => m.regModel.Email, new { @class = "h5" })</div>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(m => m.regModel.Email, new { @class = "form-control", placeholder = "Email" })
+                            @Html.ValidationMessage("Email", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4"> @Html.LabelFor(m => m.regModel.Password, new { @class = "h5" }) </div>
+                        <div class="col-md-8">
+                            @Html.PasswordFor(m => m.regModel.Password, new { @class = "form-control", placeholder = "Password" })
+                            @Html.ValidationMessage("Password", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4"> @Html.LabelFor(m => m.regModel.ConfirmPassword, new { @class = "h5" }) </div>
+                        <div class="col-md-8">
+                            @Html.PasswordFor(m => m.regModel.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm Password" })
+                            @Html.ValidationMessage("ConfirmPassword", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    
+                    <!--Create a hidden form-field named returnUrl that will hold the value of the LoginModel ReturnUrl property-->
+                    @*@Html.Hidden("returnUrl", Model.ReturnUrl)*@
+                    <br />
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Join Now</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

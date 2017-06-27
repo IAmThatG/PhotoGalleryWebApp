@@ -1,0 +1,38 @@
+﻿@model PhotoGallery.web.ViewModel.HomePageModel
+
+<div class="modal fade" id="createAlbumModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">New Photo Album</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <form class="form-horizontal" method="post" action="@Url.Action("Create", "Album")">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label h5">Album Title</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(m => m.Album.AlbumTitle, new { @class = "form-control", placeholder = "Album Title" })
+                            @Html.ValidationMessage("AlbumTitle", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label h5">Description</label>
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(m => m.Album.AlbumDescription, new { @class = "form-control", placeholder = "Describe Album" })
+                            @Html.ValidationMessage("AlbumDescription", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

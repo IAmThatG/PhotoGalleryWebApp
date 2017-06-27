@@ -1,0 +1,16 @@
+﻿body {
+    padding-top: 70px;
+}
+
+.navbar{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#loginForm{
+    margin-top: 50px;
+}
+
+#alert{
+    margin-top: 20px;
+}

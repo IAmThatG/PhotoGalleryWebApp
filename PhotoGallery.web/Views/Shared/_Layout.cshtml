@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>@ViewBag.Title-PhotoGallery</title>
+
+    <!-- Bootstrap -->
+    <link href="~/Content/bootstrap-superhero.min.css" rel="stylesheet">
+
+    <!-- Site -->
+    <link href="~/Content/site.css" rel="stylesheet" />
+
+    <!-- Font -->
+    <link href="~/Fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    @Html.Partial("_Navbar")
+
+    <div class="container">
+        <!---Load Partial View For Displaying Alerts if AlertMsg and AlertType Are Not Null-->
+        @if (@ViewBag.AlertMsg != null && @ViewBag.AlertType != null)
+        {
+            @Html.Partial("_Alert")
+        }
+
+        @RenderBody()
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>

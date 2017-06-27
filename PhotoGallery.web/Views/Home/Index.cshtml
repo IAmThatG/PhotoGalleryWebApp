@@ -1,0 +1,42 @@
+﻿@model PhotoGallery.web.ViewModel.HomePageModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="jumbotron text-center">
+    <h1>Photo Gallery</h1>
+    <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <p>
+        <a href="#" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createAlbumModal">Create Album</a>
+        @*<a class="btn btn-primary btn-lg" href=@Url.Action("Create", "Album")>Create Album</a>*@
+        @Html.Partial("_CreateAlbum", Model.Album)
+    </p>
+</div>
+
+@foreach (var album in Model.Albums)
+{
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>@album.AlbumTitle</h2>
+                @if (album.AlbumDescription.IsEmpty())
+                {
+                    <p>No album description</p> 
+                }
+                else
+                {
+                    <p>@album.AlbumDescription</p>
+                }
+                <a href="@Url.Action("Index", "Picture", new { albumID = album.AlbumID })" class="btn btn-primary btn-sm">View</a>
+                <span class="pull-right">
+                    <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target=@($"#editAlbumModal{@album.AlbumID.ToString()}")><span class="fa fa-edit"></span> Edit</a>          
+                    &nbsp;
+                    <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target=@($"#deleteAlbumModal{@album.AlbumID.ToString()}")><span class="fa fa-times"></span> Delete</a>
+                </span>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_EditAlbum", album)
+    @Html.Partial("_DeleteAlbum", album)
+}

@@ -1,0 +1,49 @@
+﻿@model PhotoGallery.web.ViewModel.PictureViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#addPictureModal"><span class="fa fa-plus"></span> Add Picture</button>
+    <a href=@Url.Action("Index", "Home") class="btn btn-primary pull-left"><span class="fa fa-arrow-left"></span></a>
+</div>
+
+<br /><br />
+<div class="row">
+    @if (Model.Pictures != null && Model.Pictures.Any())
+    {
+        foreach (var picture in Model.Pictures)
+        {
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <a href=@Url.Content(picture.FilePath)>
+                            <img src=@Url.Content(picture.FilePath) alt=@picture.PictureTitle class="img-rounded img-responsive">
+                        </a>
+                        <h4>@picture.PictureTitle</h4>
+                        <a download="" href=@Url.Content(picture.FilePath) class="btn btn-primary btn-sm" height="100" width="100"><span class="fa fa-download"></span></a>
+                        <span class="pull-right">
+                            <a href="@Url.Action("Edit", "Album", new { id = picture.AlbumID })" class="btn btn-primary btn-sm"><span class="fa fa-edit"></span> Edit</a>
+                            &nbsp;
+                            <a href="@Url.Action("Delete", "Album", new { id = picture.AlbumID })" class="btn btn-danger btn-sm"><span class="fa fa-times"></span> Delete</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="padding: 150px 0px; text-align:center">
+            <h2>There is no picture in this Album</h2>
+        </div>
+    }
+</div>
+
+<!--Render the modal partial for adding picture-->
+@{
+    Html.RenderAction("AddPartial", "Picture", new { albumID = Model.AlbumID });
+}
