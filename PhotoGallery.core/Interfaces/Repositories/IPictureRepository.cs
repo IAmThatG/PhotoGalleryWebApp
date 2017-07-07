@@ -15,9 +15,9 @@ namespace PhotoGallery.core.Interfaces.Repositories
         T GetPictureByID(int pictureID);
 
         //Edit Picture
-        int EditPicture(T obj);
+        int RenamePicture(T obj);
 
         //Delete Picture
-        int DeletePicture(T obj);
+        int DeletePicture(int pictureID);
     }
 }

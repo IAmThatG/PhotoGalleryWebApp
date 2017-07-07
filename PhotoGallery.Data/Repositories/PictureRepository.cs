@@ -30,29 +30,27 @@ namespace PhotoGallery.Data.Repositories
             return _context.SaveChanges();
         }
 
-        public int DeletePicture(PictureModel obj)
+        public int DeletePicture(int pictureID)
         {
-            var pictureEntity = new Picture
-            {
-                PictureID = obj.PictureID,
-                PictureTitle = obj.PictureTitle,
-                FileName = obj.FileName,
-                FilePath = obj.FilePath,
-                FileSize = obj.FileSize,
-                FileMime = obj.FileMime,
-                AlbumID = obj.AlbumID
-            };
-            _context.Pictures.Remove(pictureEntity);
+            var picture = _context.Pictures.SingleOrDefault(a => a.PictureID == pictureID);
+            _context.Pictures.Remove(picture);
             return _context.SaveChanges();
         }
 
-        public int EditPicture(PictureModel obj)
+        public int RenamePicture(PictureModel obj)
         {
-            var pictureEntity = new Picture
-            {
-                PictureTitle = obj.PictureTitle,
-                FilePath = obj.FilePath,
-            };
+            var pictureEntity = _context.Pictures.SingleOrDefault(p => p.PictureID == obj.PictureID);
+            pictureEntity.PictureTitle = obj.PictureTitle;
+            //var pictureEntity = new Picture
+            //{
+            //    PictureID = pictureModel.PictureID,
+            //    AlbumID = pictureModel.AlbumID,
+            //    PictureTitle = pictureModel.PictureTitle,
+            //    FileName = pictureModel.FileName,
+            //    FilePath = pictureModel.FilePath,
+            //    FileSize = pictureModel.FileSize,
+            //    FileMime = pictureModel.FileMime
+            //};
             _context.Entry(pictureEntity).State = System.Data.Entity.EntityState.Modified;
             return _context.SaveChanges();
         }
@@ -79,10 +77,11 @@ namespace PhotoGallery.Data.Repositories
 
         public PictureModel GetPictureByID(int pictureID)
         {
-            var pictureEntity = _context.Pictures.FirstOrDefault(p => p.AlbumID == pictureID);
+            var pictureEntity = _context.Pictures.SingleOrDefault(p => p.PictureID == pictureID);
             return new PictureModel
             {
                 PictureID = pictureEntity.PictureID,
+                AlbumID = pictureEntity.AlbumID,
                 PictureTitle = pictureEntity.PictureTitle,
                 FileName = pictureEntity.FileName,
                 FilePath = pictureEntity.FilePath,

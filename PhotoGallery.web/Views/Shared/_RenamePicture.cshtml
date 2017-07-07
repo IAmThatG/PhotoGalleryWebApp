@@ -1,0 +1,34 @@
+﻿@model PhotoGallery.core.Models.PictureModel
+
+<!--Modal for edit album-->
+<div class="modal fade" id=@($"renamePictureModal{Model.PictureID.ToString()}") tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete Picture</h4>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" action=@Url.Action("Rename", "Picture")>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label h5">Picture Title</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(m => m.PictureTitle, new { @class = "form-control", placeholder = "Give your picture a title" })
+                            @Html.ValidationMessage("PictureTitle", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    @Html.HiddenFor(m => m.PictureID)
+                    @Html.HiddenFor(m => m.AlbumID)
+                    <div class="form-group">
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            &nbsp;
+                            <button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

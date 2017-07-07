@@ -1,4 +1,4 @@
-﻿@model PhotoGallery.web.ViewModel.PictureViewModel
+﻿@model PhotoGallery.web.ViewModel.AlbumPageModel
 
 @{
     ViewBag.Title = "Index";
@@ -16,7 +16,6 @@
     {
         foreach (var picture in Model.Pictures)
         {
-
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -26,13 +25,19 @@
                         <h4>@picture.PictureTitle</h4>
                         <a download="" href=@Url.Content(picture.FilePath) class="btn btn-primary btn-sm" height="100" width="100"><span class="fa fa-download"></span></a>
                         <span class="pull-right">
-                            <a href="@Url.Action("Edit", "Album", new { id = picture.AlbumID })" class="btn btn-primary btn-sm"><span class="fa fa-edit"></span> Edit</a>
+                            <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="@($"#renamePictureModal{picture.PictureID.ToString()}")"><span class="fa fa-edit"></span> Rename</a>
                             &nbsp;
-                            <a href="@Url.Action("Delete", "Album", new { id = picture.AlbumID })" class="btn btn-danger btn-sm"><span class="fa fa-times"></span> Delete</a>
+                            <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target=@($"#deletePictureModal{picture.PictureID.ToString()}")><span class="fa fa-times"></span> Delete</a>
                         </span>
                     </div>
                 </div>
             </div>
+
+            <!--Render the modal for renaming pictures-->
+            @Html.Partial("_RenamePicture", picture)
+
+            <!--Render the modal for deleting pictures-->
+            @Html.Partial("_DeletePicture", picture)
         }
     }
     else
@@ -44,6 +49,4 @@
 </div>
 
 <!--Render the modal partial for adding picture-->
-@{
-    Html.RenderAction("AddPartial", "Picture", new { albumID = Model.AlbumID });
-}
+@{Html.RenderAction("AddPartial", "Picture", new { albumID = Model.AlbumID });}

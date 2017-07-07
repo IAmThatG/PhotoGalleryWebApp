@@ -27,20 +27,6 @@ namespace PhotoGallery.web.Controllers
             return View();
         }
 
-        //GET: Create New Album
-        //[HttpGet]
-        //public ActionResult Create(bool? alert = false)
-        //{
-        //    //set alert ViewBag values 
-        //    if (alert.GetValueOrDefault())
-        //    {
-        //        ViewBag.AlertMsg = TempData["AlertMsg"];
-        //        ViewBag.AlertType = TempData["AlertType"];
-        //    }
-
-        //    return View();
-        //}
-
         //POST: Create a New Album
         [HttpPost]
         public ActionResult Create(HomePageModel homePageModel)

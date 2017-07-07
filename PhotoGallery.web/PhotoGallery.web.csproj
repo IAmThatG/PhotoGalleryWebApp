@@ -157,11 +157,15 @@
     <Compile Include="Utilities\Alert.cs" />
     <Compile Include="Utilities\AuthManager.cs" />
     <Compile Include="Utilities\AuthTypes.cs" />
+    <Compile Include="Utilities\ImageUpload.cs" />
+    <Compile Include="Utilities\Interfaces\IFileable.cs" />
     <Compile Include="Utilities\ImageService.cs" />
+    <Compile Include="Utilities\Interfaces\IUploadable.cs" />
     <Compile Include="ViewModel\AddPictureModel.cs" />
     <Compile Include="ViewModel\AlbumViewModel.cs" />
     <Compile Include="ViewModel\HomePageModel.cs" />
     <Compile Include="ViewModel\LoginModel.cs" />
+    <Compile Include="ViewModel\AlbumPageModel.cs" />
     <Compile Include="ViewModel\PictureViewModel.cs" />
     <Compile Include="ViewModel\RegistrationModel.cs" />
   </ItemGroup>
@@ -184,6 +188,8 @@
     <Content Include="Views\Shared\_EditAlbum.cshtml" />
     <Content Include="Views\Shared\_DeleteAlbum.cshtml" />
     <Content Include="Views\Shared\_CreateAlbum.cshtml" />
+    <Content Include="Views\Shared\_DeletePicture.cshtml" />
+    <Content Include="Views\Shared\_RenamePicture.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

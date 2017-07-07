@@ -19,14 +19,14 @@ namespace PhotoGallery.core.Managers
             return _pictureRepository.AddPicture(obj, albumID) > 0 ? true : false;
         }
 
-        public bool DeletePicture(PictureModel obj)
+        public bool DeletePicture(int pictureID)
         {
-            return _pictureRepository.DeletePicture(obj) > 0 ? true : false;
+            return _pictureRepository.DeletePicture(pictureID) > 0 ? true : false;
         }
 
-        public bool EditPicture(PictureModel obj)
+        public bool RenamePicture(PictureModel obj)
         {
-            return _pictureRepository.EditPicture(obj) > 0 ? true : false;
+            return _pictureRepository.RenamePicture(obj) > 0 ? true : false;
         }
 
         public List<PictureModel> GetAlbumPictures(int albumID)

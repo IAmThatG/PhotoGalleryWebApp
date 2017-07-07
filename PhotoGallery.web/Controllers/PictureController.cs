@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace PhotoGallery.web.Controllers
@@ -32,8 +31,8 @@ namespace PhotoGallery.web.Controllers
         public ActionResult Index(int albumID, bool? alert = false)
         {
             var pictures = new List<PictureModel>();
-            PictureViewModel pictureViewModel = new PictureViewModel();
-            pictureViewModel.AlbumID = albumID;
+            AlbumPageModel albumPageModel = new AlbumPageModel();
+            albumPageModel.AlbumID = albumID;
 
             if (alert.GetValueOrDefault())
             {
@@ -44,19 +43,19 @@ namespace PhotoGallery.web.Controllers
             try
             {
                 pictures = _pictureManager.GetAlbumPictures(albumID);
-                pictureViewModel.Pictures = pictures;
+                albumPageModel.Pictures = pictures;
             }
             catch (Exception e)
             {
                 //log error msg in errorLog file
                 Console.WriteLine($"{e.Message} ---> {e.Source}");
-                
+
                 //send an error notice to the view
                 TempData[Alert.AlertMsgKey] = "Ooops!...Pictures couldn't be fetched. Pls contact DBAdmin";
                 TempData[Alert.AlertTypeKey] = "danger";
                 return RedirectToAction("Index", "Home");
             }
-            return View(pictureViewModel);
+            return View(albumPageModel);
         }
 
         //Post: Add picture
@@ -66,12 +65,17 @@ namespace PhotoGallery.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                //get the path of the file
+                //ImageFile imageFile = new ImageFile(addPictureModel.PictureFile);
+                //imageFile.ServerFileName = Server.MapPath($"~/Pictures/{imageFile.ImageFieNameWithExt}");
+                //imageFile.PerformUpload();
+
+                //get the full path of the file to be uploaded
                 var fileName = addPictureModel.PictureFile.FileName;
 
-                //get the image name extension from the fileName sent by the browser
+                //get the image name from the fileName sent by the browser without its extension
                 var imageFileName = Path.GetFileNameWithoutExtension(fileName);
-                
+
+                //get the file extension
                 var fileExtension = Path.GetExtension(fileName);
 
                 //validate the extention by comparing it with the allowed extensions
@@ -83,67 +87,62 @@ namespace PhotoGallery.web.Controllers
                     //create image processor
                     var imageProcessor = new ImageService();
 
-                    //use image processor to scale picture retaining a max aspect ratio of 400px
-                    var image = imageProcessor.ScaleWidth(addPictureModel.PictureFile.InputStream, 400);
-                    
-                    //get folder location of our pictures folder
-                    var folderPath = Server.MapPath("~/Pictures/");
+                    //scale picture retaining a max aspect ratio of 400px
+                    var imageInputStream = imageProcessor.ScaleWidth(addPictureModel.PictureFile.InputStream, 400);
 
+                    //get the name of the image with our new extension
                     var imageFileNameWithExt = $"{imageFileName}.png";
 
-                    //combine path to get full file name
-                    var filePath = Path.Combine(folderPath, imageFileNameWithExt);
+                    //get the file path we want to upload to
+                    var filePath = Server.MapPath($"~/Pictures/{imageFileNameWithExt}");
 
                     //open an output stream for saving file
                     using (var outputStream = System.IO.File.Create(filePath))
                     {
                         //copy image to the output stream
-                        image.CopyTo(outputStream);
+                        imageInputStream.CopyTo(outputStream);
                     }
 
                     //Save picture in DB
-                    var isSaved = SavePicture(addPictureModel, imageFileNameWithExt);
-
-                    //if save is unsuccessful, return view with error msg.
-                    if(isSaved == false)
+                    var isSaved = SavePicture(addPictureModel, imageFileName);
+                    if (isSaved)
                     {
-                        TempData[Alert.AlertMsgKey] = "Ooops!!!...Couldn't save picture";
-                        TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
-
+                        //if saving to DB is successful redirect to index in order to load picture and display success msg
+                        TempData[Alert.AlertMsgKey] = "Picture Uploaded Successfully";
+                        TempData[Alert.AlertTypeKey] = Alert.AlertSuccess;
                         return RedirectToAction("Index", "Picture", new { albumID = addPictureModel.AlbumID, alert = true });
                     }
                 }
+                else
+                {
+                    TempData[Alert.AlertMsgKey] = "Error!!!...Picture must be jpeg, jpg or png";
+                    TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
+                    return RedirectToAction("Index", "Picture", new { albumID = addPictureModel.AlbumID, alert = true });
+                }
             }
-            else
-            {
-                TempData[Alert.AlertMsgKey] = "Error!!!...Picture must be jpeg, jpg or png";
-                TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
-                return RedirectToAction("Index", "Picture", new { albumID = addPictureModel.AlbumID, alert = true });
-            }
-
-            //if saving to DB is successful redirect to index in order to load picture
-            TempData[Alert.AlertMsgKey] = "Picture Uploaded Successfully";
-            TempData[Alert.AlertTypeKey] = Alert.AlertSuccess;
+            //if ModelState is invalid or saving picture to DB fails
+            TempData[Alert.AlertMsgKey] = "Ooops!!!...Couldn't save picture";
+            TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
             return RedirectToAction("Index", "Picture", new { albumID = addPictureModel.AlbumID, alert = true });
         }
 
-        private bool SavePicture(AddPictureModel addPictureModel, string imageFileName)
+        /// <summary>
+        /// Saves data about the picture to the DB
+        /// </summary>
+        /// <param name="addPictureModel"></param>
+        /// <param name="imageFileName"></param>
+        /// <returns></returns>
+        private bool SavePicture(AddPictureModel addPictureModel, string fileNameWithoutExt)
         {
             var pictureModel = new PictureModel
             {
                 AlbumID = addPictureModel.AlbumID,
                 PictureTitle = addPictureModel.Title,
-                FileName = Path.GetFileNameWithoutExtension(addPictureModel.PictureFile.FileName),
-                FilePath = $"~/Pictures/{imageFileName}",
+                FileName = fileNameWithoutExt,
+                FilePath = $"~/Pictures/{fileNameWithoutExt}.png",
                 FileSize = addPictureModel.PictureFile.ContentLength,
             };
             return _pictureManager.AddPicture(pictureModel, addPictureModel.AlbumID);
-        }
-
-        //method to handle image processing
-        public Image ProcessImage(Stream inputImageStream)
-        {
-            return Image.FromStream(inputImageStream);
         }
 
         //method to display Add Picture Partial view
@@ -154,16 +153,67 @@ namespace PhotoGallery.web.Controllers
             return PartialView(pictureModel);
         }
 
-        //POST: Add Picture
+        //POST: Rename Picture
+        public ActionResult Rename(PictureModel picture)
+        {
+            //TODO: Check if ModelState is valid
+            if (ModelState.IsValid)
+            {
+                //TODO: Tell picture manager to rename picture
+                var isRenamed = _pictureManager.RenamePicture(picture);
 
-        //GET: Edit Picture
-
-        //POST: Edit Picture
-
-        //GET: Delete Picture
-
+                //TODO: If rename is successfull, do the following
+                if (isRenamed)
+                {
+                    //TODO: Return to index with success alert msg
+                    TempData[Alert.AlertMsgKey] = "Picture has been renamed successfully";
+                    TempData[Alert.AlertTypeKey] = Alert.AlertSuccess;
+                    return RedirectToAction("Index", "Picture", new { albumID = picture.AlbumID, alert = true });
+                }
+                //TODO: On failure to rename, return to index with error alert
+                TempData[Alert.AlertMsgKey] = "Sorry, picture couldn't be renamed. Please try again";
+                TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
+                return RedirectToAction("Index", "Picture", new { albumID = picture.AlbumID, alert = true });
+            }
+            //TODO: If ModelState isn't valid, return to index with error alert
+            TempData[Alert.AlertMsgKey] = "Sorry, picture couldn't be renamed. Please try again";
+            TempData[Alert.AlertTypeKey] = Alert.AlertDanger;
+            return RedirectToAction("Index", "Picture", new { albumID = picture.AlbumID, alert = true });
+        }
+       
         //POST: Delete Picture
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            //Find picture by ID
+            var pictureModel = _pictureManager.GetPictureByID(id);
 
+            //TODO: Tell PictureManager to delete Picture
+            var isDeleted = _pictureManager.DeletePicture(id);
+
+            //TODO: If picture is deleted, do the following
+            if (isDeleted)
+            {
+                //TODO: Delete picture from file
+                //Find the File to be deleted
+                var filePath = Server.MapPath(pictureModel.FilePath);
+
+                //Delete the picture from the file.
+                System.IO.File.Delete(filePath);
+
+                //TODO: Return to index page with success alert
+                TempData[Alert.AlertMsgKey] = "Picture Deleted Successfully";
+                TempData[Alert.AlertTypeKey] = Alert.AlertSuccess;
+                return RedirectToAction("Index", "Picture", new { albumID = pictureModel.AlbumID, alert = true });
+            }
+
+            //TODO: If picture failed to delete, return to index page with danger alert
+            TempData[Alert.AlertMsgKey] = "Sorry, Picture couldn't be deleted. Pls try again.";
+            TempData[Alert.AlertTypeKey] = Alert.AlertSuccess;
+            return RedirectToAction("Index", "Picture", new { albumID = pictureModel.AlbumID, alert = true });
+        }
+
+        //Dispose of DbContext resource.
         protected override void Dispose(bool disposing)
         {
             if (disposing)

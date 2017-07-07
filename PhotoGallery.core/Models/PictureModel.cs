@@ -16,6 +16,6 @@ namespace PhotoGallery.core.Models
         public long FileSize { get; set; }
         public int AlbumID { get; set; }
 
-        public AlbumModel Album { get; set; }
+        //public AlbumModel Album { get; set; }
     }
 }

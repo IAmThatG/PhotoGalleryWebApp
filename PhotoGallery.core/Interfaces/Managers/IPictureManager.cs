@@ -15,9 +15,9 @@ namespace PhotoGallery.core.Interfaces.Managers
         T GetPictureByID(int pictureID);
 
         //Edit Picture
-        bool EditPicture(T obj);
+        bool RenamePicture(T obj);
 
         //Delete Picture
-        bool DeletePicture(T obj);
+        bool DeletePicture(int pictureID);
     }
 }
